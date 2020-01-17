@@ -17,9 +17,34 @@
 
 /* The game itself */
 
-/* void game(int level, int points, char * j50, char * j25) */
+int game(int i)
+{
+    FILE *quest_file;
+    char answers [4];
+    int ascii = 65; 
+    int number = 200;
+    char buff[200];
+    char print_text [5000][200];
+    quest_file = fopen("questions.txt","r");
+    for (; i < 5; i++)
+    {
+        fgets(buff, number, (FILE *)quest_file);
+        strcpy(print_text[i], buff);
+        if (print_text[i][0] == 'O')
+        {
+            strncpy(&answers[i-1],print_text[i] +8, 80);  
+            printf("*** %c: %s", ascii, &answers[i-1]);
+            ascii++;
+        }
+        else if (print_text[i][0] != 'O')
+        {
+            printf("*** %s", print_text[i]);
+        }
+    }
+    fclose(quest_file);
+    return i + 8;
 
-
+}
 
 /* print the status of the player */
 
@@ -76,14 +101,15 @@ int main(int argc, char * argv[])
     int level = 0;
     int tries = 0;
     int check = 0;
+    int i = 0;
     char text[] =".txt";
     char j50[] = "Yes";
     char j25[] = "Yes";
-    char name[] = "Newbie";
+    char name[20] = "Newbie";
 
     /*This while will cause the game to continue until you quit/lose/win*/
 
-    while(command[0] != 'q' && level != 100000 && tries != 2)
+    while(command[0] != 'q' && check != 100000 && tries != 2)
     {
         printf(">");
         fgets(command, 100, stdin);
@@ -93,23 +119,17 @@ int main(int argc, char * argv[])
         {
             if (option)
             {
-                char name[20];
-                strcpy(name ,&option);
-                check = 1;
-
-                printf("*** Hi %s, let's get started!\n", name);
-                print_status(level, j50, j25,name);
-                /*game(points, level, j50, j25);*/
+                char new_name[20];
+                strcpy(new_name ,&option);
+                printf("*** Hi %s, let's get started!\n", new_name);
+                strcpy(name, new_name);
             }
-
-            else if (check == 0)
+            if (check == 0)
             {
                 puts("*** Hi Newbie, let's get started!");
                 print_status(level, j50, j25, name);
-                /*game(points, level, j50, j25); <-- objectif number 1*/
             }
-
-
+            game(i);
         }
         else if (choice == 'r')
         {
@@ -139,6 +159,7 @@ int main(int argc, char * argv[])
                 fprintf(save_file, "%s\n" , j50);
                 fprintf(save_file, "%s\n" , j25);
                 fprintf(save_file, "%s\n" , name);
+                fclose(save_file);
                 puts(MSG_SAVE);
             }
         }
@@ -152,6 +173,14 @@ int main(int argc, char * argv[])
         {
             puts(MSG_BYE);
             break;
+        }
+
+        else if (choice == 'c')
+        {
+            puts("This game was made by :");
+            puts("Vasco Duarte (21905658)");
+            puts("Tony (gne gne)");
+            puts("Joao Magic (gagagou)");
         }
         
         else
