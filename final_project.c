@@ -19,7 +19,6 @@
 struct Player {
     int level;
     char difficulty[20];
-    int check;
     char name[20];
     char j50[10];
     char j25[10];
@@ -48,7 +47,7 @@ void print_status()
 void game(int next_question)
 {
     int infite = 1;
-    char choice;
+    char choice_2;
     while(infite)
     {
         print_status();
@@ -80,7 +79,6 @@ void game(int next_question)
         while(set_free == 0)
         {
             strncpy(difficulty_check,print_text[6 + next_question] +11, 80);
-            printf("%c||%c", difficulty_check[0], player.difficulty[0]);
             if (difficulty_check[0] == player.difficulty[0])
             {
                 for (i = 0;i < 5 ;i++)
@@ -152,21 +150,21 @@ void game(int next_question)
         }
         while (game_condition != 1)
         {
-            char command[20];
-            char option;
+            char command_2[20];
+            char option_2;
 
             printf(">");
-            fgets(command, 100, stdin);
-            sscanf(command, "%c %s", &choice, &option);
+            fgets(command_2, 100, stdin);
+            sscanf(command_2, "%c %s", &choice_2, &option_2);
 
-            if (choice == answer_1.letter)
+            if (choice_2 == answer_1.letter)
             {
                 puts(MSG_WELL);
                 next_question += 7;
                 game_condition = 1;
                 player.level += 1000;
             }
-            else if (choice == answer_2.letter)
+            else if (choice_2 == answer_2.letter)
             {
                 puts(MSG_WRONG);
                 printf("*** The correct answer was %c: %s", answer_1.letter,answer_1.answer);
@@ -174,16 +172,7 @@ void game(int next_question)
                 next_question += 7;
                 game_condition = 1;
             }
-            else if (choice == answer_3.letter)
-            {
-                puts(MSG_WRONG);
-                printf("*** The correct answer was %c: %s", answer_1.letter,answer_1.answer);
-                fclose(quest_file);
-                player.tries++;
-                next_question += 7;
-                game_condition = 1;
-            }
-            else if (choice == answer_4.letter)
+            else if (choice_2 == answer_3.letter)
             {
                 puts(MSG_WRONG);
                 printf("*** The correct answer was %c: %s", answer_1.letter,answer_1.answer);
@@ -192,8 +181,18 @@ void game(int next_question)
                 next_question += 7;
                 game_condition = 1;
             }
-            else if (choice == 'q')
+            else if (choice_2 == answer_4.letter)
             {
+                puts(MSG_WRONG);
+                printf("*** The correct answer was %c: %s", answer_1.letter,answer_1.answer);
+                fclose(quest_file);
+                player.tries++;
+                next_question += 7;
+                game_condition = 1;
+            }
+            else if (choice_2 == 'q')
+            {
+                puts(MSG_BYE);
                 return;
             }
             else
@@ -201,6 +200,11 @@ void game(int next_question)
                 puts(MSG_UNKNOWN);
             }
             
+        }
+        if (player.tries == 2)
+        {
+            puts(MSG_OVER);
+            return;
         }
     }
 
@@ -244,12 +248,11 @@ int main(int argc, char * argv[])
     /*Those are the valors that we will use*/
 
     char command[20];
-    char option;
+    char option[20];
     char choice;
 
     player.level = 0;
     player.tries = 0;
-    player.check = 0;
     strcpy(player.name, "Newbie");
     strcpy(player.difficulty, "easy");
     strcpy(player.j50, "Yes");
@@ -261,17 +264,17 @@ int main(int argc, char * argv[])
 
     /*This while will cause the game to continue until you quit/lose/win*/
 
-    while(command[0] != 'q' && check != 100000 && player.tries != 2)
+    while(command[0] != 'q')
     {
         printf(">");
         fgets(command, 100, stdin);
-        sscanf(command, "%c %s", &choice, &option);
+        sscanf(command, "%c %s", &choice, option);
 
         if (choice == 'n')
         {
-            if (option)
+            if (strlen(option) > 2)
             {
-                strcpy(player.name,&option);
+                strcpy(player.name,option);
                 printf("*** Hi %s, let's get started!\n", player.name);
                 check = 1;
             }
@@ -281,13 +284,13 @@ int main(int argc, char * argv[])
                 printf("*** Hi %s, let's get started!\n", player.name);
             }
             game(next_question);
-            return (0);
+            break;
         }
         else if (choice == 'r')
         {
             /* Do the game first */
             char file_name[20];
-            strcpy(file_name ,&option);
+            strcpy(file_name ,option);
             strcat(file_name, text);
             FILE *save_file; 
             save_file = fopen(file_name,"r");
@@ -299,11 +302,11 @@ int main(int argc, char * argv[])
 
         else if (choice == 's')
         {
-            if (option)
+            if (strlen(command) > 1)
             {
                 /* fazer que isto pegue o nome do jogador*/
                 char file_name[20];
-                strcpy(file_name ,&option);
+                strcpy(file_name ,option);
                 strcat(file_name, text);
                 FILE *save_file; 
                 save_file = fopen(file_name,"w");
