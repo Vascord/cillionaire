@@ -66,13 +66,13 @@ void game(int next_question)
         int test_3 = 0;
         int test_4 = 0;
         char buff[200];
-        char print_text [5000][200];
+        char print_text [3500][100];
         quest_file = fopen("questions.txt","r");
         if (next_question == 0)
         {
-            for(z = 0; z < 300;z++)
+            for(z = 0; z < 3500;z++)
             {
-                fgets(buff, 200, (FILE *) quest_file);
+                fgets(buff, 100, (FILE *) quest_file);
                 strcpy(print_text[z],buff);
             }
         }
