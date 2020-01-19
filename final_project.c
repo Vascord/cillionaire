@@ -352,8 +352,8 @@ int main(int argc, char * argv[])
         {
             puts("*** This game was made by :");
             puts("*** Vasco Duarte (21905658)");
-            puts("*** Tony (gne gne)");
-            puts("*** Joao Magic (gagagou)");
+            puts("*** Antonio Branco (21906811)");
+            puts("*** Joao Gonçalves (21901696)");
         }
         
         else
