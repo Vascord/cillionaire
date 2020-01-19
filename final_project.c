@@ -111,6 +111,7 @@ void game(int next_question)
                 next_question += 7;
             }
         }
+        fclose(quest_file);
         i = 0;
         while (i <= 3)
         {
@@ -176,7 +177,6 @@ void game(int next_question)
             {
                 puts(MSG_WRONG);
                 printf("*** The correct answer was %c: %s", answer_1.letter,answer_1.answer);
-                fclose(quest_file);
                 player.tries++;
                 next_question += 7;
                 game_condition = 1;
@@ -185,7 +185,6 @@ void game(int next_question)
             {
                 puts(MSG_WRONG);
                 printf("*** The correct answer was %c: %s", answer_1.letter,answer_1.answer);
-                fclose(quest_file);
                 player.tries++;
                 next_question += 7;
                 game_condition = 1;
@@ -232,6 +231,7 @@ int main(int argc, char * argv[])
 {
     
     print_menu();
+    char ficheiro[20];
     
     /*Start the programm while verifing if there's the seeds or not*/
 
@@ -239,9 +239,27 @@ int main(int argc, char * argv[])
     {
         srand(time(0));
     }
-    else if(argc == 2)
+    if(argc >= 2)
     {
-        srand(atoi(argv[1]));
+        if (strcmp(argv[1], "-s") == 0)
+        {
+            srand(atoi(argv[2]));
+        }
+        if (strcmp(argv[1], "-f") == 0)
+        {
+            strcpy(ficheiro,argv[2]);
+        }
+    }
+    if(argc == 4)
+    {
+        if (strcmp(argv[3], "-s") == 0)
+        {
+            srand(atoi(argv[4]));
+        }
+        if (strcmp(argv[3], "-f") == 0)
+        {
+            strcpy(ficheiro,argv[4]);
+        }
     }
     
 
