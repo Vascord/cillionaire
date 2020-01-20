@@ -25,7 +25,12 @@ struct Player {
     int tries;
 } player;
 
+struct File {
+    char fichier[30];
+} file;
+
 struct Answers {
+    char question[300];
     char answer[20];
     int right;
     char letter;
@@ -36,23 +41,50 @@ void print_status()
 {
     puts("********************************************");
     printf("*** Name:  %s               *\n", player.name);
-    printf("*** level:  %d                  *\n", player.level);
+    printf("*** Level:  %d                  *\n", player.level);
     printf("*** j50: %s                    *\n", player.j50);
     printf("*** j25:  %s                   *\n", player.j25);
     puts("********************************************");
 }
 
+int levels(int level_up)
+{
+    if (level_up == 0)
+    {
+        level_up = 500;
+    }
+    else if (level_up != 0)
+    {
+        level_up *= 2;
+        if (level_up == 4000)
+        {
+            level_up = 5000;
+        }
+        if (level_up == 40000)
+        {
+            level_up = 5000;
+        }
+        if(level_up == 2000)
+        {
+            strcpy(player.difficulty, "medium");
+        }
+        if (level_up == 10000)
+        {
+            strcpy(player.difficulty, "hard");
+        }
+    }
+    return level_up;
+}
 /* The game itself */
 
-void game(int next_question)
+int game(int next_question)
 {
     int infite = 1;
     char choice_2;
+    FILE *quest_file;
     while(infite)
     {
         print_status();
-        FILE *quest_file;
-        int ascii = 65;
         int i,z;
         int set_free = 0;
         char difficulty_check [20];
@@ -60,16 +92,13 @@ void game(int next_question)
         struct Answers answer_2;
         struct Answers answer_3;
         struct Answers answer_4;
+        struct Answers question;
         int game_condition = 0;
-        int test_1 = 0;
-        int test_2 = 0;
-        int test_3 = 0;
-        int test_4 = 0;
         char buff[200];
         char print_text [3500][100];
-        quest_file = fopen("questions.txt","r");
         if (next_question == 0)
         {
+            quest_file = fopen(file.fichier,"r");
             for(z = 0; z < 3500;z++)
             {
                 fgets(buff, 100, (FILE *) quest_file);
@@ -85,7 +114,8 @@ void game(int next_question)
                 {
                     if (i == 0)
                     {
-                        printf("%s", print_text[i + next_question]);
+                        strncpy(question.question,print_text[i + next_question] +9, 200);
+                        printf("*** Question: %s", question.question);
                     }
                     if (i == 1)
                     {
@@ -112,42 +142,50 @@ void game(int next_question)
             }
         }
         fclose(quest_file);
-        i = 0;
-        while (i <= 3)
+        int e = rand() %4;
+        if (e == 0)
         {
-            int e = rand() %4;
-            if (e == 0 && test_1 < 1)
-            {
-                printf("*** %c: %s", ascii, answer_1.answer);
-                answer_1.letter = ascii;
-                ascii++;
-                test_1 = 1;
-                i++;
-            }
-            if (e == 1 && test_2 < 1)
-            {
-                printf("*** %c: %s", ascii, answer_2.answer);
-                answer_2.letter = ascii;
-                ascii++;
-                test_2 = 1;
-                i++;
-            }
-            if (e == 2 && test_3 < 1)
-            {
-                printf("*** %c: %s", ascii, answer_3.answer);
-                answer_3.letter = ascii;
-                ascii++;
-                test_3 = 1;
-                i++;
-            }
-            if (e == 3 && test_4 < 1)
-            {
-                printf("*** %c: %s", ascii, answer_4.answer);
-                answer_4.letter = ascii;
-                ascii++;
-                test_4 = 1;
-                i++;
-            }
+            printf("*** A: %s", answer_1.answer);
+            printf("*** B: %s", answer_2.answer);
+            printf("*** C: %s", answer_3.answer);
+            printf("*** D: %s", answer_4.answer);
+            answer_1.letter = 'A';
+            answer_2.letter = 'B';
+            answer_3.letter = 'C';
+            answer_4.letter = 'D';
+        }
+        if (e == 1)
+        {
+            printf("*** A: %s", answer_2.answer);
+            printf("*** B: %s", answer_1.answer);
+            printf("*** C: %s", answer_3.answer);
+            printf("*** D: %s", answer_4.answer);
+            answer_2.letter = 'A';
+            answer_1.letter = 'B';
+            answer_3.letter = 'C';
+            answer_4.letter = 'D';
+        }
+        if (e == 2)
+        {
+            printf("*** A: %s", answer_2.answer);
+            printf("*** B: %s", answer_3.answer);
+            printf("*** C: %s", answer_1.answer);
+            printf("*** D: %s", answer_4.answer);
+            answer_2.letter = 'A';
+            answer_3.letter = 'B';
+            answer_1.letter = 'C';
+            answer_4.letter = 'D';
+        }
+        if (e == 3)
+        {
+            printf("*** A: %s", answer_2.answer);
+            printf("*** B: %s", answer_3.answer);
+            printf("*** C: %s", answer_4.answer);
+            printf("*** D: %s", answer_1.answer);
+            answer_2.letter = 'A';
+            answer_3.letter = 'B';
+            answer_4.letter = 'C';
+            answer_1.letter = 'D';
         }
         while (game_condition != 1)
         {
@@ -162,8 +200,9 @@ void game(int next_question)
             {
                 puts(MSG_WELL);
                 next_question += 7;
+                player.tries = 0;
                 game_condition = 1;
-                player.level += 1000;
+                player.level = levels(player.level);
             }
             else if (choice_2 == answer_2.letter)
             {
@@ -192,7 +231,7 @@ void game(int next_question)
             else if (choice_2 == 'q')
             {
                 puts(MSG_BYE);
-                return;
+                return 0;
             }
             else
             {
@@ -203,10 +242,16 @@ void game(int next_question)
         if (player.tries == 2)
         {
             puts(MSG_OVER);
-            return;
+            return 0;
+        }
+        else if(player.level == 1000000)
+        {
+            puts(MSG_WIN);
+            printf("*** Congratulations %s", player.name);
+            return 0;
         }
     }
-
+    return 0;
 }
  
 /* print the option menu */
@@ -231,7 +276,6 @@ int main(int argc, char * argv[])
 {
     
     print_menu();
-    char ficheiro[20];
     
     /*Start the programm while verifing if there's the seeds or not*/
 
@@ -247,10 +291,10 @@ int main(int argc, char * argv[])
         }
         if (strcmp(argv[1], "-f") == 0)
         {
-            strcpy(ficheiro,argv[2]);
+            strcpy(file.fichier,argv[2]);
         }
     }
-    if(argc == 4)
+    if(argc == 5)
     {
         if (strcmp(argv[3], "-s") == 0)
         {
@@ -258,7 +302,7 @@ int main(int argc, char * argv[])
         }
         if (strcmp(argv[3], "-f") == 0)
         {
-            strcpy(ficheiro,argv[4]);
+            strcpy(file.fichier,argv[4]);
         }
     }
     
@@ -273,8 +317,8 @@ int main(int argc, char * argv[])
     player.tries = 0;
     strcpy(player.name, "Newbie");
     strcpy(player.difficulty, "easy");
-    strcpy(player.j50, "Yes");
-    strcpy(player.j25, "Yes");
+    strcpy(player.j50, "YES");
+    strcpy(player.j25, "YES");
     int next_question = 0;
 
     int check = 0;
@@ -290,19 +334,26 @@ int main(int argc, char * argv[])
 
         if (choice == 'n')
         {
-            if (strlen(option) > 2)
+            if(strlen(file.fichier) < 2)
             {
-                strcpy(player.name,option);
-                printf("*** Hi %s, let's get started!\n", player.name);
-                check = 1;
+                puts("*** You can't do that");
             }
-            if (check == 0)
+            else if (strlen(file.fichier) >= 2)
             {
-                strcpy(player.name,"Newbie");
-                printf("*** Hi %s, let's get started!\n", player.name);
+                if (strlen(option) > 2)
+                {
+                    strcpy(player.name,option);
+                    printf("*** Hi %s, let's get started!\n", player.name);
+                    check = 1;
+                }
+                if (check == 0)
+                {
+                    strcpy(player.name,"Newbie");
+                    printf("*** Hi %s, let's get started!\n", player.name);
+                }
+                game(next_question);
+                break;
             }
-            game(next_question);
-            break;
         }
         else if (choice == 'r')
         {
